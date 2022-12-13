@@ -65,6 +65,15 @@ public class MsgCreator : MonoBehaviour
         rect.sizeDelta = new Vector2(rect.sizeDelta.x, pannel.sizeDelta.y + 150);
         msg.SetActive(true);
         newMsg += 1000;
+        if (container.childCount > 50)
+        {
+            for(int i = 0;i <= container.childCount - 50; i++)
+            {
+                Destroy(container.GetChild(0).gameObject);
+            }
+            Camera.main.Render();
+        }
+        container.parent.parent.GetComponent<ScrollRect>().normalizedPosition = Vector2.zero;
         //Debug.Log("before:" + container.parent.parent.GetComponent<ScrollRect>().normalizedPosition.y);
         //Debug.Log("after:" + container.parent.parent.GetComponent<ScrollRect>().normalizedPosition.y);
     }

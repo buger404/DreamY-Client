@@ -9,7 +9,7 @@ using UnityEngine.UI;
 /// </summary>
 public class UIDispatcher : MonoBehaviour
 {
-    public Text TipText;
+    public Text TipText, PeopleText;
     public Transform Container;
     public GameObject ChatPanel;
     public GameObject LoginBtn;

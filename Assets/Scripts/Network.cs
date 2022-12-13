@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Network : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class Network : MonoBehaviour
     public static bool Logined = false;
     public static long QQ = 10000;
     public TextAsset Server;
+    public static long Fail = 0;
 
     private void Start()
     {
@@ -46,7 +48,7 @@ public class Network : MonoBehaviour
     public static void Receiving()
     {
         NetworkStream stream = client.GetStream();
-        Send("dy :version 1.3");
+        Send("dy :version 1.4");
         UIDispatcher.Register(() =>
         {
             if (PlayerPrefs.GetString("token") != "")
@@ -102,6 +104,13 @@ public class Network : MonoBehaviour
                             PlayerPrefs.Save();
                         });
                     }
+                    else if (p[1].StartsWith("dy :people ") && p[0] == "2487411076")
+                    {
+                        UIDispatcher.Register(() =>
+                        {
+                            UIDispatcher.active.PeopleText.text = "DreamY - " + p[1].Split(' ')[2] + "人在线";
+                        });
+                    }
                     else
                     {
                         UIDispatcher.Register(() =>
@@ -119,13 +128,28 @@ public class Network : MonoBehaviour
         client.Close();
         UIDispatcher.Register(() =>
         {
-            Application.Quit();
+            Fail++;
+            if (Fail > 3)
+                Application.Quit();
+            else
+                SceneManager.LoadScene("Startup", LoadSceneMode.Single);
         });
     }
 
     public static void Send(string s)
     {
-        byte[] wr = Encoding.UTF8.GetBytes(QQ + splitStr2 + s + splitStr);
-        client.GetStream().Write(wr, 0, wr.Length);
+        try
+        {
+            byte[] wr = Encoding.UTF8.GetBytes(QQ + splitStr2 + s + splitStr);
+            client.GetStream().Write(wr, 0, wr.Length);
+        }catch(Exception err)
+        {
+            UIDispatcher.Register(() =>
+            {
+                UIDispatcher.active.TipText.text = "网络异常！！！";
+                UIDispatcher.active.TipText.gameObject.SetActive(false);
+                UIDispatcher.active.TipText.gameObject.SetActive(true);
+            });
+        }
     }
 }

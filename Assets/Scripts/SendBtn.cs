@@ -14,6 +14,21 @@ public class SendBtn : MonoBehaviour
     private void Awake()
     {
         SendField = SendBox.GetComponent<TMP_InputField>();
+        SendField.onValidateInput = (text, charIndex, addedChar) =>
+        {
+            if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer)
+            {
+                if (addedChar == '\n')
+                {
+                    if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl))
+                    {
+                        Touch();
+                        return '\0';
+                    }
+                }
+            }
+            return addedChar;
+        };
     }
     public void Touch()
     {
